@@ -1,0 +1,3 @@
+[environments.main]
+store = "YOURSTORE.myshopify.com"
+ignore = "package.json"

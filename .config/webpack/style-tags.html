@@ -1,0 +1,25 @@
+{%- if template.directory contains 'customers' %}
+  {%- assign template = template | replace: 'customers/', '' -%}
+  <link type="text/css" href="{{ 'template.customers.dist.css' | asset_url}}" rel="stylesheet">
+{%- endif -%}
+
+<% for (var css in htmlWebpackPlugin.files.css) { %>
+  <% var basename = htmlWebpackPlugin.files.css[css].split('/').reverse()[0]; %>
+  <% var chunkName = basename.replace('.dist.scss', '').replace('.dist.css', '').replace('.dist.styleLiquid', ''); %>
+  <% var src = `{{ '${basename}' | asset_url }}` %>
+
+  <% if (typeof htmlWebpackPlugin.options.liquidTemplates[chunkName] !== 'undefined') { %>
+    {%- if template == '<%= chunkName.replace('template.', '') %>' -%}
+      <link type="text/css" href="<%= src %>" rel="stylesheet">
+    {%- else -%}
+      <link rel="prefetch" href="<%= src %>" as="style">
+    {%- endif -%}
+  <% } else if(typeof htmlWebpackPlugin.options.liquidLayouts[chunkName] !== 'undefined') { %>
+    {%- if layout ==  '<%= chunkName.replace('layout.', '') %>' -%}
+      <link type="text/css" href="<%= src %>" rel="stylesheet">
+    {%- else -%}
+      <link rel="prefetch" href="<%= src %>" as="style">
+    {%- endif -%}
+  <% } %>
+<% } %>
+ 

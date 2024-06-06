@@ -1,0 +1,27 @@
+<script type="text/javascript" src="{{ 'vendor.dist.js' | asset_url }}" defer></script>
+
+{%- if template.directory contains 'customers' %}
+  {%- assign template = template | replace: 'customers/', '' -%}
+  <script type="text/javascript" src="{{ 'template.customers.dist.js' | asset_url}}" defer></script>
+{%- endif -%}
+
+<% for (var js in htmlWebpackPlugin.files.js) { %>
+  <% var basename = htmlWebpackPlugin.files.js[js].split('/').reverse()[0]; %>
+  <% var chunkName = basename.replace('.dist.js', ''); %>
+  <% var src = `{{ '${basename}' | asset_url }}` %>
+
+  <% if (typeof htmlWebpackPlugin.options.liquidTemplates[chunkName] !== 'undefined') { %>
+    {%- if template == '<%= chunkName.replace('template.', '') %>' -%}
+      <script type="text/javascript" src="<%= src %>" defer></script>
+    {%- else -%}
+      <link rel="prefetch" href="<%= src %>" as="script">
+    {%- endif -%}
+  <% } else if(typeof htmlWebpackPlugin.options.liquidLayouts[chunkName] !== 'undefined') { %>
+     {%- if layout == '<%= chunkName.replace('layout.', '') %>' -%}
+      <script type="text/javascript" src="<%= src %>" defer></script>
+     {%- else -%}
+      <link rel="prefetch" href="<%= src %>" as="script">
+    {%- endif -%}
+  <% } %>
+<% } %>
+ 
